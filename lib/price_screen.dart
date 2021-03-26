@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +16,7 @@ class _PriceScreenState extends State<PriceScreen> {
   String valueInUSD;
 
   List<DropdownMenuItem> getDropDownItem() {
-    List<DropdownMenuItem<String>> dropDropMenu = [];
+    List<DropdownMenuItem> dropDropMenu = [];
     for (int i = 0; i < currenciesList.length; i++) {
       String currency = currenciesList[i];
       var dropDownItem = DropdownMenuItem(
@@ -26,8 +28,22 @@ class _PriceScreenState extends State<PriceScreen> {
     return dropDropMenu;
   }
 
+  List<Text> getPicketItems() {
+    List<Text> currencyFromList = [];
+    for (String currency in currenciesList) {
+      currencyFromList.add(Text(currency));
+    }
+
+    // for (int i = 0; i < currenciesList.length; i++) {
+    //   String currentCurrency = currenciesList[i];
+    //
+    //   currencyFromList.add(Text(currentCurrency));
+    // }
+    return currencyFromList;
+  }
+
   void getData() async {
-    double data = await CoinData().getCoinData();
+    double data = await CoinData().getCoinData(selectedCurrency);
     setState(() {
       valueInUSD = data.toStringAsFixed(1);
     });
@@ -76,17 +92,26 @@ class _PriceScreenState extends State<PriceScreen> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.only(bottom: 30.0),
                   color: kThemeColor,
-                  child: DropdownButton<String>(
-                    value: selectedCurrency,
-                    items: getDropDownItem(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCurrency = value;
-                      });
-                      print(value);
-                    },
-                  ),
-                )
+                  child: Platform.isIOS
+                      ? CupertinoPicker(
+                          backgroundColor: kThemeColor,
+                          itemExtent: 32,
+                          onSelectedItemChanged: (selectedIndex) {
+                            print(selectedIndex);
+                          },
+                          children: getPicketItems(),
+                        )
+                      : DropdownButton<dynamic>(
+                          value: selectedCurrency,
+                          items: getDropDownItem(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCurrency = value;
+                            });
+                            print(value);
+                          },
+                        ),
+                ),
               ],
             )
           : Center(
