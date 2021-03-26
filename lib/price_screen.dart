@@ -13,7 +13,9 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
-  String valueInUSD;
+  String valueInBTC;
+  String valueInETH;
+  String valueInLTH;
 
   List<DropdownMenuItem> getDropDownItem() {
     List<DropdownMenuItem> dropDropMenu = [];
@@ -43,9 +45,13 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   void getData() async {
-    double data = await CoinData().getCoinData(selectedCurrency);
+    double dataInBTC = await CoinData().getCoinDataInBTC(selectedCurrency);
+    double dataInETH = await CoinData().getCoinDataInETH(selectedCurrency);
+    //double dataInLTH = await CoinData().getCoinDataInLTH(selectedCurrency);
     setState(() {
-      valueInUSD = data.toStringAsFixed(1);
+      valueInBTC = dataInBTC.toStringAsFixed(1);
+      valueInETH = dataInETH.toStringAsFixed(2);
+      //valueInLTH = dataInLTH.toStringAsFixed(2);
     });
   }
 
@@ -62,30 +68,70 @@ class _PriceScreenState extends State<PriceScreen> {
           'Coin Ticker',
         ),
       ),
-      body: valueInUSD != null
+      body: valueInBTC != null
           ? Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
                     padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-                    child: Card(
-                      color: kThemeColor,
-                      elevation: 5.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15.0, horizontal: 28.0),
-                          child: Text(
-                            '1 BTC = $valueInUSD USD',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              color: Color(0xFFFFFFFF),
-                            ),
-                          )),
+                    child: Column(
+                      children: [
+                        Card(
+                          color: kThemeColor,
+                          elevation: 5.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 28.0),
+                              child: Text(
+                                '1 BTC = $valueInBTC $selectedCurrency',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              )),
+                        ),
+                        Card(
+                          color: kThemeColor,
+                          elevation: 5.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 28.0),
+                              child: Text(
+                                '1 ETH = $valueInETH $selectedCurrency',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              )),
+                        ),
+                        Card(
+                          color: kThemeColor,
+                          elevation: 5.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 28.0),
+                              child: Text(
+                                '1 LTH = $valueInETH $selectedCurrency',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              )),
+                        ),
+                      ],
                     )),
                 Container(
                   height: 150,
@@ -107,6 +153,7 @@ class _PriceScreenState extends State<PriceScreen> {
                           onChanged: (value) {
                             setState(() {
                               selectedCurrency = value;
+                              getData();
                             });
                             print(value);
                           },
